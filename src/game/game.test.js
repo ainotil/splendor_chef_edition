@@ -4,7 +4,7 @@ import { ChefsTable } from './game.js';
 import { COLORS } from './constants.js';
 import { RECIPES } from './data/recipes.js';
 import { CHEFS } from './data/chefs.js';
-import { bonuses, score } from './state.js';
+import { bonuses, score, refill } from './state.js';
 
 function newGame(seed = 'test') {
   const client = Client({ game: { ...ChefsTable, seed }, numPlayers: 5 });
