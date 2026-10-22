@@ -61,4 +61,68 @@ describe('takeTwo', () => {
     expect(G.bank.vinegar).toBe(2);
     expect(ctx.currentPlayer).toBe('4');
   });
+
+  describe('reserve', () => {
+    it('预订市场明牌：进手里、拿高汤、市场补牌、轮到下一位', () => {
+      const client = newClient();
+      const before = client.getState().G;
+      const target = before.market[2][1];
+      const topOfDeck = before.decks[2][0];
+
+      client.moves.reserve(2, 1);
+      const { G, ctx } = client.getState();
+      const me = G.players['0'];
+
+      expect(me.reserved.map(c => c.id)).toEqual([target.id]);
+      expect(me.tokens.stock).toBe(1);
+      expect(G.bank.stock).toBe(6);
+      expect(G.market[2][1].id).toBe(topOfDeck.id);   // 同一格补上牌堆顶
+      expect(G.decks[2]).toHaveLength(25);
+      expect(ctx.currentPlayer).toBe('1');
+    });
+
+    it('预订牌堆顶暗牌：市场不变，牌堆 -1', () => {
+      const client = newClient();
+      const before = client.getState().G;
+      const top = before.decks[3][0];
+
+      client.moves.reserveFromDeck(3);
+      const { G } = client.getState();
+
+      expect(G.players['0'].reserved[0].id).toBe(top.id);
+      expect(G.decks[3]).toHaveLength(15);
+      expect(G.market[3].map(c => c.id)).toEqual(before.market[3].map(c => c.id));
+    });
+
+    it('手里已有 3 张时不能再预订', () => {
+      const client = newClient();
+      // 5 个人轮流预订，转 3 圈后玩家 0 已有 3 张
+      for (let i = 0; i < 15; i++) client.moves.reserve(1, 0);
+      expect(client.getState().G.players['0'].reserved).toHaveLength(3);
+
+      client.moves.reserve(1, 0);     // 第 4 张
+      const { G, ctx } = client.getState();
+      expect(G.players['0'].reserved).toHaveLength(3);
+      expect(ctx.currentPlayer).toBe('0');   // 被拒绝，还是玩家 0
+    });
+
+    it('高汤拿完了也可以预订，只是拿不到高汤', () => {
+      const client = newClient();
+      for (let i = 0; i < 7; i++) client.moves.reserve(1, 0);   // 7 个高汤被拿光
+      expect(client.getState().G.bank.stock).toBe(0);
+
+      client.moves.reserve(1, 0);     // 第 8 次：玩家 2 的第二张
+      const { G } = client.getState();
+      expect(G.players['2'].reserved).toHaveLength(2);
+      expect(G.players['2'].tokens.stock).toBe(1);   // 只有第一次拿到
+      expect(G.bank.stock).toBe(0);
+    });
+
+    it('不能预订不存在的位置', () => {
+      const client = newClient();
+      client.moves.reserve(2, 4);
+      client.moves.reserve(4, 0);
+      expect(client.getState().G.players['0'].reserved).toHaveLength(0);
+    });
+  });
 });

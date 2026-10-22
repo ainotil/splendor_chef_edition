@@ -59,7 +59,25 @@ describe('setup', () => {
     expect(ids(newGame('a'))).toBe(ids(newGame('a')));
     expect(ids(newGame('a'))).not.toBe(ids(newGame('b')));
   });
-});
+
+  it('refill 从牌堆顶补到同一格，牌堆减少', () => {
+    const G = {
+      decks:  { 1: [{ id: 'A' }, { id: 'B' }] },
+      market: { 1: [{ id: 'x' }, null, { id: 'y' }, { id: 'z' }] },
+    };
+    refill(G, 1, 1);
+
+    expect(G.market[1][1].id).toBe('A');
+    expect(G.decks[1].map(c => c.id)).toEqual(['B']);
+  });
+
+  it('牌堆空了就留空位 null', () => {
+    const G = { decks: { 1: [] }, market: { 1: [{ id: 'x' }, { id: 'y' }] } };
+    refill(G, 1, 0);
+
+    expect(G.market[1][0]).toBeNull();
+  });
+  });
 
 describe('helpers', () => {
   const player = {

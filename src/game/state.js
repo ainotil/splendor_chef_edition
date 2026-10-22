@@ -30,3 +30,8 @@ export function score(player) {
 export function tokenCount(player) {
   return Object.values(player.tokens).reduce((a, b) => a + b, 0);
 }
+
+export function refill(G, tier) {
+  const next = G.decks[tier].shift();
+  G.market[tier][slot] = next ?? null;
+}
