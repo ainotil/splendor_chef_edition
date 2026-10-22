@@ -2,7 +2,7 @@ import { RECIPES } from './data/recipes.js';
 import { CHEFS } from './data/chefs.js';
 import { COLORS, SEASONING_PER_COLOR, STOCK, MARKET_SIZE, CHEFS_IN_GAME } from './constants.js';
 import { newPlayer } from './state.js';
-import { takeThree, takeTwo, reserve, reserveFromDeck, buy, buyReserved, payAndTake } from './moves.js';
+import { takeThree, takeTwo, reserve, reserveFromDeck, buy, buyReserved, discard } from './moves.js';
 
 export function setup({ ctx, random }) {
     // 1. Bank
@@ -41,6 +41,11 @@ export const ChefsTable = {
   minPlayers: 2,
   maxPlayers: 5,
   setup,
-  turn: { minMoves: 1, maxMoves: 1 },
-  moves: { takeThree, takeTwo, reserve, reserveFromDeck, buy, buyReserved, payAndTake },
+  turn: {
+    stages: {
+      // 冰箱超过上限时进入：只能弃牌
+      discard: { moves: { discard } },
+    },
+  },
+  moves: { takeThree, takeTwo, reserve, reserveFromDeck, buy, buyReserved },
 };
