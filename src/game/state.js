@@ -126,3 +126,33 @@ function payAndTake(G, me, card, extra) {
   me.cards.push(card);
   return true;
 }
+
+export function eligibleChefs(G, player) {
+  const b = bonuses(player);
+  return G.chefs.filter(chef =>
+    Object.entries(chef.requires).every(([c, n]) => b[c] >= n)
+  );
+}
+
+// 终局排名：口碑高的在前；平局比食谱少的；再平局比恶魔少的
+export function ranking(G) {
+  return Object.entries(G.players)
+    .map(([id, p]) => ({
+      id,
+      score: score(p),
+      cards: p.cards.length,
+      devils: p.chefs.filter(c => c.side === 'devil').length,
+    }))
+    .sort((a, b) =>
+      b.score - a.score ||
+      a.cards - b.cards ||
+      a.devils - b.devils
+    );
+}
+
+// 赢家：排第一的玩家；三项都相同就共同获胜
+export function winners(G) {
+  const [top, ...rest] = ranking(G);
+  const same = p => p.score === top.score && p.cards === top.cards && p.devils === top.devils;
+  return [top, ...rest.filter(same)].map(p => p.id);
+}

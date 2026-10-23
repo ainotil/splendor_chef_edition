@@ -1,19 +1,39 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 import { COLORS, MAX_RESERVED, MARKET_SIZE, FRIDGE_LIMIT } from './constants.js';
-import { refill, payment, tokenCount } from './state.js';
+import { refill, payment, tokenCount, eligibleChefs } from './state.js';
 
 // ---------- 回合结束 ----------
+// ---------- 回合结束 ----------
 
-// 每个行动成功后都调用：冰箱超了就进入弃牌环节，否则结束回合
+// 每个行动成功后都调用：冰箱超了就先弃牌，否则直接进入回合收尾
 function finishAction({ G, playerID, events }) {
   if (tokenCount(G.players[playerID]) > FRIDGE_LIMIT) {
     events.setActivePlayers({ currentPlayer: 'discard' });
   } else {
-    events.endTurn();
+    endOfTurn({ G, playerID, events });
   }
 }
 
-// 弃牌环节专用：一次扔掉 1 个调味或高汤，降到上限就结束回合
+// 回合收尾：检查主厨，然后结束回合
+// 满足 1 位：自动获得；满足多位：让玩家选；每回合最多 1 位
+function endOfTurn({ G, playerID, events }) {
+  const options = eligibleChefs(G, G.players[playerID]);
+  if (options.length === 1) {
+    takeChef(G, playerID, options[0].id);
+  } else if (options.length > 1) {
+    events.setActivePlayers({ currentPlayer: 'chooseChef' });
+    return;   // 等玩家选完再结束回合
+  }
+  events.endTurn();
+}
+
+function takeChef(G, playerID, chefId) {
+  const index = G.chefs.findIndex(c => c.id === chefId);
+  const [chef] = G.chefs.splice(index, 1);
+  G.players[playerID].chefs.push(chef);
+}
+
+// 弃牌环节专用：一次扔掉 1 个调味或高汤，降到上限就进入回合收尾
 export function discard({ G, playerID, events }, token) {
   const me = G.players[playerID];
   if (!(token in me.tokens) || me.tokens[token] < 1) return INVALID_MOVE;
@@ -21,7 +41,16 @@ export function discard({ G, playerID, events }, token) {
   me.tokens[token] -= 1;
   G.bank[token] += 1;
 
-  if (tokenCount(me) <= FRIDGE_LIMIT) events.endTurn();
+  if (tokenCount(me) <= FRIDGE_LIMIT) endOfTurn({ G, playerID, events });
+}
+
+// 选主厨环节专用：从满足条件的主厨里选 1 位
+export function chooseChef({ G, playerID, events }, chefId) {
+  const options = eligibleChefs(G, G.players[playerID]);
+  if (!options.some(c => c.id === chefId)) return INVALID_MOVE;
+
+  takeChef(G, playerID, chefId);
+  events.endTurn();
 }
 
 // 拿 1–3 个不同颜色的调味（不能拿高汤）
