@@ -1,17 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Client } from 'boardgame.io/client';
-import { ChefsTable, setup } from './game.js';
+import { clientWith } from './testing.js';
 import { CHEFS } from './data/chefs.js';
 import { score } from './state.js';
-
-function clientWith(change) {
-  const game = {
-    ...ChefsTable,
-    seed: 'test',
-    setup: (ctx) => { const G = setup(ctx); change(G); return G; },
-  };
-  return Client({ game, numPlayers: 5 });
-}
 
 const chef = id => CHEFS.find(c => c.id === id);
 

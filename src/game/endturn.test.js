@@ -1,15 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Client } from 'boardgame.io/client';
-import { ChefsTable, setup } from './game.js';
-
-function clientWith(change) {
-  const game = {
-    ...ChefsTable,
-    seed: 'test',
-    setup: (ctx) => { const G = setup(ctx); change(G); return G; },
-  };
-  return Client({ game, numPlayers: 5 });
-}
+import { clientWith } from './testing.js';
 
 // 给玩家 0 一些调味（同时从桌上扣掉，保持总数守恒）
 function give(G, tokens) {

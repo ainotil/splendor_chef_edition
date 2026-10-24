@@ -1,6 +1,6 @@
 import { COLORS } from './constants.js'
 
-// { salt: 0, pepper: 0, ..., stock: 0 }
+// { sugar: 0, soy: 0, ..., stock: 0 }
 export function emptyTokens() {
   const t = { stock: 0 };
   for (const c of COLORS) t[c] = 0;
@@ -11,7 +11,7 @@ export function newPlayer() {
     return { tokens: emptyTokens(), cards: [], reserved:[], chefs: [] }
 }
 
-// Permanent discounts from purchased recipes: { salt: 2, pepper: 0, ... }
+// Permanent discounts from purchased recipes: { sugar: 2, soy: 0, ... }
 export function bonuses(player) {
   const b = {};
   for (const c of COLORS) b[c] = 0;
@@ -36,7 +36,7 @@ export function refill(G, tier, slot) {
   G.market[tier][slot] = next ?? null;
 }
 
-/// 招牌菜（三级）最少要实付：3 个这道菜需要的调味，或者 1 个高汤
+// 招牌菜（三级）最少要实付：3 个这道菜需要的调味，或者 1 个高汤
 export const SIGNATURE_MIN_SEASONING = 3;
 
 // 算出买 card 要付什么。付得起返回 { sugar: 1, ..., stock: 0 }，付不起返回 null。
@@ -113,18 +113,6 @@ function autoSeasoning(player, card, pay) {
     missing -= n;
   }
   return missing === 0 ? extra : null;
-}
-
-function payAndTake(G, me, card, extra) {
-  const pay = payment(me, card, extra);
-  if (!pay) return false;
-
-  for (const [token, n] of Object.entries(pay)) {
-    me.tokens[token] -= n;
-    G.bank[token] += n;
-  }
-  me.cards.push(card);
-  return true;
 }
 
 export function eligibleChefs(G, player) {

@@ -1,22 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { Client } from 'boardgame.io/client';
-import { ChefsTable, setup } from './game.js';
+import { clientWith as withChefs } from './testing.js';
 import { CHEFS } from './data/chefs.js';
 import { winners } from './state.js';
 
-function clientWith(change) {
-  const game = {
-    ...ChefsTable,
-    seed: 'test',
-    setup: (ctx) => {
-      const G = setup(ctx);
-      G.chefs = [];   // 这组测试不需要主厨来打扰
-      change(G);
-      return G;
-    },
-  };
-  return Client({ game, numPlayers: 5 });
-}
+// 这组测试不需要主厨来打扰
+const clientWith = change => withChefs(G => { G.chefs = []; change(G); });
 
 // 给某位玩家几张已购买的食谱，points 是每张的口碑
 function giveCards(G, id, pointsList) {

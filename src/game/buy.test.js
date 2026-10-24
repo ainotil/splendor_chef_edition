@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Client } from 'boardgame.io/client';
-import { ChefsTable, setup } from './game.js';
+import { clientWith } from './testing.js';
 import { payment, emptyTokens } from './state.js';
 
 // 做一个假玩家：tokens 只写需要的，其余为 0
@@ -107,18 +106,6 @@ describe('payment（纯计算）', () => {
 });
 
 // 用固定的 G 开局，方便构造"手里有什么、市场有什么"
-function clientWith(change) {
-  const game = {
-    ...ChefsTable,
-    seed: 'test',
-    setup: (ctx) => {
-      const G = setup(ctx);
-      change(G);
-      return G;
-    },
-  };
-  return Client({ game, numPlayers: 5 });
-}
 
 describe('buy（行动）', () => {
   it('买市场的牌：付款退回桌上、食谱到面前、市场补牌', () => {

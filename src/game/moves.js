@@ -3,7 +3,6 @@ import { COLORS, MAX_RESERVED, MARKET_SIZE, FRIDGE_LIMIT } from './constants.js'
 import { refill, payment, tokenCount, eligibleChefs } from './state.js';
 
 // ---------- 回合结束 ----------
-// ---------- 回合结束 ----------
 
 // 每个行动成功后都调用：冰箱超了就先弃牌，否则直接进入回合收尾
 function finishAction({ G, playerID, events }) {

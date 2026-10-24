@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Client } from 'boardgame.io/client';
-import { ChefsTable } from './game.js';
+import { ChefsTableNoDraft as ChefsTable } from './game.js';
 import { COLORS } from './constants.js';
 import { RECIPES } from './data/recipes.js';
 import { CHEFS } from './data/chefs.js';
@@ -32,14 +32,17 @@ describe('setup', () => {
     expect(G.bank).toEqual({ stock: 7, sugar: 10, soy: 10, chili: 10, peppercorn: 10, vinegar: 10 });
   });
 
-  it('deals 4 cards per tier and keeps the rest in the decks', () => {
-    const G = newGame();
-    for (const [tier, total] of [[1, 40], [2, 30], [3, 20]]) {
-      expect(G.market[tier]).toHaveLength(4);
-      expect(G.decks[tier]).toHaveLength(total - 4);
-      expect([...G.market[tier], ...G.decks[tier]].every(c => c.tier === tier)).toBe(true);
-    }
-  });
+    it('deals 4 cards per tier, 5 starters from tier 1, rest stay in the decks', () => {
+      const G = newGame();
+      expect(G.starters).toHaveLength(5);
+      expect(G.starters.every(c => c.tier === 1)).toBe(true);
+      for (const [tier, total] of [[1, 40], [2, 30], [3, 20]]) {
+        const starters = tier === 1 ? G.starters : [];
+        expect(G.market[tier]).toHaveLength(4);
+        expect(G.market[tier].length + G.decks[tier].length + starters.length).toBe(total);
+        expect([...G.market[tier], ...G.decks[tier]].every(c => c.tier === tier)).toBe(true);
+      }
+    });
 
   it('picks 3 angels and 3 devils', () => {
     const G = newGame();

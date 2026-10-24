@@ -1,0 +1,78 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f1e7; color: #2b2520; }
+button { font: inherit; cursor: pointer; padding: 4px 10px; border-radius: 6px; border: 1px solid #b9ab97; background: #fff; }
+button:disabled { cursor: default; opacity: 0.45; }
+button.primary { background: #8b3a2b; color: #fff; border-color: #8b3a2b; }
+h1 { margin: 0; font-size: 22px; }
+h2 { margin: 0 0 8px; font-size: 16px; }
+h3 { margin: 12px 0 6px; font-size: 14px; color: #6b5e50; }
+
+.board { padding: 12px 16px 24px; max-width: 1400px; margin: 0 auto; }
+.header { display: flex; align-items: center; gap: 24px; margin-bottom: 12px; }
+.turn { font-size: 16px; }
+.final-round { background: #c8372d; color: #fff; padding: 2px 10px; border-radius: 12px; }
+
+.panel { background: #fffdf8; border: 1px solid #e3d8c6; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.muted { color: #9a8c7c; }
+.small { font-size: 12px; }
+.warn { color: #c8372d; margin: 0 0 6px; }
+
+.play { display: grid; grid-template-columns: 1fr 340px; gap: 12px; align-items: start; }
+
+/* 代币 */
+.token { width: 56px; height: 56px; border-radius: 50%; border: 2px solid rgba(0,0,0,.25); padding: 0;
+         display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
+.token:disabled { opacity: 1; }
+.token.small { width: 40px; height: 40px; font-size: 11px; }
+.token.selected { outline: 3px solid #8b3a2b; outline-offset: 2px; }
+.token-name { font-size: 12px; }
+.token-count { font-size: 18px; font-weight: 700; }
+.token.small .token-count { font-size: 14px; }
+
+/* 食谱卡 */
+.card { width: 112px; min-height: 130px; border-radius: 8px; border: 1px solid #cdbfa9; background: #fff;
+        display: flex; flex-direction: column; overflow: hidden; }
+.card.empty { align-items: center; justify-content: center; color: #b9ab97; border-style: dashed; }
+.card.dim { opacity: 0.55; }
+.card-top { display: flex; justify-content: space-between; padding: 4px 8px; font-weight: 700; }
+.card-points { font-size: 18px; }
+.card-name { padding: 6px 8px; font-size: 14px; flex: 1; }
+.card-cost { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 8px 6px; }
+.cost-pip { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; border: 1px solid rgba(0,0,0,.25); }
+.card-actions { display: flex; gap: 4px; padding: 0 6px 6px; }
+.card-actions button { padding: 2px 6px; font-size: 12px; }
+.card.tier-3 { border-color: #8b3a2b; }
+.card.tier-2 { border-color: #b98a3e; }
+
+.deck { width: 72px; min-height: 130px; border-radius: 8px; background: #e9dfcf; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 6px; font-size: 13px; }
+.deck button { font-size: 12px; padding: 2px 6px; }
+.market-row { flex-wrap: nowrap; }
+
+.pickable { cursor: pointer; border-radius: 10px; padding: 2px; }
+.pickable.picked { outline: 3px solid #8b3a2b; }
+
+/* 主厨 */
+.chef { width: 120px; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.chef.angel { background: #eef4fb; border: 1px solid #a9c1de; }
+.chef.devil { background: #f8ecea; border: 1px solid #d9a9a2; }
+.chef-name { font-weight: 700; }
+.chef .card-cost { padding: 0; }
+.tag { padding: 2px 8px; border-radius: 10px; font-size: 13px; }
+.tag.angel { background: #eef4fb; }
+.tag.devil { background: #f8ecea; }
+
+/* 底部玩家 */
+.players { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.player { background: #fffdf8; border: 1px solid #e3d8c6; border-radius: 10px; padding: 8px; }
+.player.current { border: 2px solid #8b3a2b; }
+.player-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.mini { display: flex; gap: 3px; margin-bottom: 4px; }
+.mini-token { min-width: 26px; height: 26px; border-radius: 13px; display: inline-flex; align-items: center; justify-content: center;
+              font-size: 12px; font-weight: 700; border: 1px solid rgba(0,0,0,.2); padding: 0 3px; }
+.mini-token sup { font-size: 9px; margin-left: 1px; }
+
+.gameover table { border-collapse: collapse; margin-top: 12px; }
+.gameover th, .gameover td { border: 1px solid #e3d8c6; padding: 6px 12px; text-align: center; }

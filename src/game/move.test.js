@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Client } from 'boardgame.io/client';
-import { ChefsTable } from './game.js';
+import { ChefsTableNoDraft as ChefsTable } from './game.js';
 
 function newClient() {
   return Client({ game: { ...ChefsTable, seed: 'test' }, numPlayers: 5 });
