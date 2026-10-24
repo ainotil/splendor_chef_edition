@@ -97,3 +97,11 @@ describe('helpers', () => {
     expect(score(player)).toBe(6);
   });
 });
+describe('player count', () => {
+  it.each([2, 3, 4, 5])('%i 人局：每人一张家常菜可选，玩家数正确', (numPlayers) => {
+    const client = Client({ game: { ...ChefsTable, seed: 'test' }, numPlayers });
+    const { G } = client.getState();
+    expect(Object.keys(G.players)).toHaveLength(numPlayers);
+    expect(G.starters).toHaveLength(numPlayers);
+  });
+});
